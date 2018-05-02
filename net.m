@@ -123,18 +123,22 @@ function res = grad(model, data, wd_coefficient)
 
 
   % Forward propagation
-  hid_input = model.input_to_hid * data.inputs; 
-  hid_output = logistic(hid_input);
-  class_input = model.hid_to_class * hid_output;
+  hid_input = model.input_to_hid * data.inputs; % zj
+  hid_output = logistic(hid_input); % yj
+  class_input = model.hid_to_class * hid_output; % zk
   log_class_prob = logsoftmax(class_input);
-  class_prob = exp(log_class_prob); 
+  class_prob = exp(log_class_prob); % yk
   % class_prob is the model output.
   
   %% TODO - Write code here ---------------
 
     % Right now the function just returns a lot of zeros. Your job is to change that.
-    res.input_to_hid = model.input_to_hid * 0;
-    res.hid_to_class = model.hid_to_class * 0;
+    res.input_to_hid = (class_prob - data.targets)*model.hid_to_class * exp(-hid_input)/(1+ ...
+                                                      exp(-hid_input)).^2 * hid_output  + ...
+        wd_coefficient*model.hid_to_class;
+    
+    res.hid_to_class = (class_prob - data.targets)*class_prob + wd_coefficient*model.hid_to_class;
+    
   % ---------------------------------------
 end
 
