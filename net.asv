@@ -133,13 +133,14 @@ function res = grad(model, data, wd_coefficient)
   %% TODO - Write code here ---------------
 
     % Right now the function just returns a lot of zeros. Your job is to change that.
-    n = size(class_prob, 2); %Number of data points
+    res.input_to_hid = (model.hid_to_class'*(class_prop-data.targets).* ...
+      exp(-hid_input)/(1+exp(-hid_input)).^2 )
     
-    res.input_to_hid = (model.hid_to_class'*(class_prob-data.targets).* ...
-      exp(-hid_input)./(1+exp(-hid_input)).^2 ) * data.inputs'/n + ...
-        wd_coefficient*model.input_to_hid;
+    %     res.input_to_hid = (class_prob - data.targets)*model.hid_to_class .* exp(-hid_input)/(1+ ...
+%                                                       exp(-hid_input)).^2 * hid_output  + ...
+%         wd_coefficient*model.input_to_hid;
     
-    res.hid_to_class = (class_prob - data.targets)*hid_output'/n + wd_coefficient*model.hid_to_class;
+    res.hid_to_class = (class_prob - data.targets)*hid_output' + wd_coefficient*model.hid_to_class;
     
   % ---------------------------------------
 end
